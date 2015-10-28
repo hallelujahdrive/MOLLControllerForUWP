@@ -153,6 +153,9 @@
   <data name="SettingDevice.Content" xml:space="preserve">
     <value>デバイスの設定</value>
   </data>
+  <data name="SettingDeviceDialog.PrimaryButtonText" xml:space="preserve">
+    <value>選択</value>
+  </data>
   <data name="SettingDeviceDialog.SecondaryButtonText" xml:space="preserve">
     <value>キャンセル</value>
   </data>

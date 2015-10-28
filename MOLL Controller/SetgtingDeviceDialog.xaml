@@ -8,28 +8,31 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     IsPrimaryButtonEnabled="False"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     Opened="ContentDialog_Opened"
     Closed="ContentDialog_Closed">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="160"/>
-        </Grid.RowDefinitions>
-        <TextBlock x:Name="MessageTextBlock" FontSize="16"/>
-        <ProgressBar  Grid.Row="1"
-                      x:Name="ProgressBar"
-                      IsIndeterminate="True"
-                      Height="10"
-                      HorizontalAlignment="Stretch"
-                      Margin="0,16,0,0"/>
-        <ScrollViewer Grid.Row="2"
-                      Margin="0,16,0,0">
-            <ListBox x:Name="DevicesListBox"
-                     ItemsSource="{x:Bind deviceCollection}">
-            </ListBox>
-        </ScrollViewer>
+        <StackPanel>
+            <StackPanel.Resources>
+                <Storyboard x:Name="CollapseStoryboard">
+                    <FadeOutThemeAnimation Storyboard.TargetName="MessageTextBlock"/>
+                    <FadeOutThemeAnimation Storyboard.TargetName="ProgressBar"/>
+                </Storyboard>
+            </StackPanel.Resources>
+            <TextBlock x:Name="MessageTextBlock" FontSize="16"/>
+            <ProgressBar x:Name="ProgressBar"
+                         IsIndeterminate="True"
+                         Height="10"
+                         HorizontalAlignment="Stretch"
+                         Margin="0,16,0,0"/>
+            <ScrollViewer Height="160"
+                          Margin="0,16,0,0">
+                <ListBox x:Name="DevicesListBox"
+                         SelectionChanged="DevicesListBox_SelectionChanged"
+                         ItemsSource="{x:Bind deviceCollection}">
+                </ListBox>
+            </ScrollViewer>
+        </StackPanel>
     </Grid>
 </ContentDialog>

@@ -103,6 +103,7 @@
     <Compile Include="AutoPage.xaml.cs">
       <DependentUpon>AutoPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeviceInformationExtensions.cs" />
     <Compile Include="IBufferExtenslons.cs" />
     <Compile Include="SetgtingDeviceDialog.xaml.cs">
       <DependentUpon>SetgtingDeviceDialog.xaml</DependentUpon>

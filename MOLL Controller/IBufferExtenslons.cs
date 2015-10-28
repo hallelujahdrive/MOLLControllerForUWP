@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Windows.Storage.Streams;
 
 namespace MOLL_Controller {
@@ -9,10 +10,13 @@ namespace MOLL_Controller {
     }
 
     private static byte[] ToArray(this IBuffer buffer) {
-      byte[] bytes = new byte[buffer.Length];
-      using (DataReader reader = DataReader.FromBuffer(buffer)) {
-        reader.ReadBytes(bytes);
+      if(buffer == null) {
+        throw new NullReferenceException();
       }
+        byte[] bytes = new byte[buffer.Length];
+        using (DataReader reader = DataReader.FromBuffer(buffer)) {
+          reader.ReadBytes(bytes);
+        }
 
       return bytes;
     }

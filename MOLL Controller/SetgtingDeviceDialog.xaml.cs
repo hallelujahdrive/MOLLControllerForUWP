@@ -34,7 +34,22 @@ namespace MOLL_Controller {
     private ResourceLoader loader = new ResourceLoader();
     private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(); 
 
-    private ObservableCollection<String> deviceCollection = new ObservableCollection<String>();           
+    private ObservableCollection<String> deviceCollection = new ObservableCollection<String>();
+    private List<DeviceInformation> deviceList = new List<DeviceInformation>();
+
+    private int selectedIndex;
+
+    /*public static readonly DependencyProperty dp = DependencyProperty.Register(
+      "Device",
+      typeof(DeviceInformation),
+      typeof(SettingDeviceDialog),
+      null
+      );
+
+    public DeviceInformation Device {
+      get { return (DeviceInformation)GetValue(dp); }
+      set { SetValue(dp, (DeviceInformation)value); }
+    }*/
 
     public SettingDeviceDialog () {
       this.InitializeComponent();
@@ -47,37 +62,37 @@ namespace MOLL_Controller {
       var cancellationToken = cancellationTokenSource.Token;
 
       var filter = GattDeviceService.GetDeviceSelectorFromUuid(DeviceInformationServiceUuid);
-      var devices = await DeviceInformation.FindAllAsync(filter, new[] { ContainerIdProperty }).AsTask(cancellationToken);
+      var devices = await DeviceInformation.FindAllAsync(filter, new[] { ContainerIdProperty });
       if (devices.Count > 0) {
         foreach (var device in devices) {
-          // Access to Generic Attribute Profile service
-          var gapService = await GetOtherServiceAsync(device, GattServiceUuids.GenericAccess, cancellationToken);
-          var deviceName = gapService.GetCharacteristics(GattDeviceService.ConvertShortIdToUuid(0x2a00)).First();
-          var deviceNameValue = await deviceName.ReadValueAsync(BluetoothCacheMode.Uncached).AsTask(cancellationToken);
-          var decodedDeviceName = deviceNameValue.Value.DecodeUtf8String();
-          deviceCollection.Add(decodedDeviceName);
+          try {
+            deviceList.Add(device);
+            var decodedDeviceName = await device.GetDeviceName(cancellationToken);
+            deviceCollection.Add(decodedDeviceName);
+          } catch (NullReferenceException) {
+            //デバイス見つからんかったら多分こっち来るねんな
+            MessageTextBlock.Text = loader.GetString("NotFoundDevices");
+            CollapseStoryboard.Begin();
+          }
         }
       }
     }
 
-    static async Task<GattDeviceService> GetOtherServiceAsync (DeviceInformation serviceInformation, Guid serviceUuid, CancellationToken cancellationToken) {
-      var containerId = serviceInformation.Properties[ContainerIdProperty].ToString();
-      var selector = GattDeviceService.GetDeviceSelectorFromUuid(serviceUuid);
-      var selectorWithContainer = String.Format("{0} AND System.Devices.ContainerId:=\"{{{1}}}\"", selector, containerId);
-      var serviceInformations = await DeviceInformation.FindAllAsync(selectorWithContainer, new[] { ContainerIdProperty }).AsTask(cancellationToken);
-      return await GattDeviceService.FromIdAsync(serviceInformations.Single().Id);
-    }
-
     private void ContentDialog_Closed (ContentDialog sender, ContentDialogClosedEventArgs args) {
-
+      cancellationTokenSource.Cancel();
     }
 
     private void ContentDialog_PrimaryButtonClick (ContentDialog sender, ContentDialogButtonClickEventArgs args) {
-
+      selectedIndex =  DevicesListBox.SelectedIndex;
     }
 
-    private void ContentDialog_SecondaryButtonClick (ContentDialog sender, ContentDialogButtonClickEventArgs args) {
-
+    private void DevicesListBox_SelectionChanged (object sender, SelectionChangedEventArgs e) {
+      IsPrimaryButtonEnabled = true;
     }
+
+    public DeviceInformation GetDevice () {
+      return deviceList[selectedIndex];
+    }
+
   }
 }

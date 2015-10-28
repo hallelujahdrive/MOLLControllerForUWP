@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Windows.ApplicationModel.Resources;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -23,6 +25,9 @@ namespace MOLL_Controller {
   public sealed partial class ManualPage : Page {
 
     private ResourceLoader loader = new ResourceLoader();
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+    private DeviceInformation device;
 
     public ManualPage () {
       this.InitializeComponent();
@@ -32,10 +37,22 @@ namespace MOLL_Controller {
       DeviceNameTextBlock.Text = loader.GetString("Unsetting");
     }
 
+    private async void SetDevice(DeviceInformation device) {
+      this.device = device;
+      DeviceNameTextBlock.Text = await device.GetDeviceName(cancellationTokenSource.Token);
+      ConnectionStatusToggleSwitch.IsEnabled = true;
+      ConnectionStatusToggleSwitch.IsOn = true;
+
+    }
+
     //SettingDeviceDialogを開く
     private async void SettingDeviceButton_Click (object sender, RoutedEventArgs e) {
+
       var dialog = new SettingDeviceDialog();
-      await dialog.ShowAsync();
+      var result = await dialog.ShowAsync();
+      if (result == ContentDialogResult.Primary && (device = dialog.GetDevice()) != null) {
+        SetDevice(device);
+      }
     }
   }
 }
