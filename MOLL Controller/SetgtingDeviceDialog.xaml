@@ -1,0 +1,35 @@
+﻿<ContentDialog
+    x:Class="MOLL_Controller.SettingDeviceDialog"
+    x:Uid="SettingDeviceDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MOLL_Controller"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    IsPrimaryButtonEnabled="False"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    Opened="ContentDialog_Opened"
+    Closed="ContentDialog_Closed">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="160"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="MessageTextBlock" FontSize="16"/>
+        <ProgressBar  Grid.Row="1"
+                      x:Name="ProgressBar"
+                      IsIndeterminate="True"
+                      Height="10"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,16,0,0"/>
+        <ScrollViewer Grid.Row="2"
+                      Margin="0,16,0,0">
+            <ListBox x:Name="DevicesListBox"
+                     ItemsSource="{x:Bind deviceCollection}">
+            </ListBox>
+        </ScrollViewer>
+    </Grid>
+</ContentDialog>

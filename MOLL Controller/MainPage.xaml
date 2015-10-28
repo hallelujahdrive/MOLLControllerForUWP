@@ -1,0 +1,82 @@
+﻿<Page
+    x:Class="MOLL_Controller.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MOLL_Controller"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ToggleButton x:Name="HamburgerButton"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Stretch"
+                      Width="48"
+                      RequestedTheme="Dark"
+                      Style="{StaticResource HumburgerButtonStyle}">
+            <ToggleButton.Content>
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" />
+            </ToggleButton.Content>
+        </ToggleButton>
+
+        <Grid Grid.Column="1"
+              Background="{ThemeResource SystemChromeMediumLowColor}"
+              HorizontalAlignment="Stretch"
+              Margin="48,0,0,0">
+
+            <TextBlock x:Name="TitleTextBlock"
+                       FontWeight="Bold"
+                       FontSize="16"
+                       VerticalAlignment="Center"
+                       Margin="24,0,0,0"/>
+        </Grid>
+
+        <SplitView x:Name="SplitView" 
+                   Grid.Row="1"
+                   DisplayMode="CompactOverlay"
+                   CompactPaneLength="48"
+                   OpenPaneLength="260"
+                   IsPaneOpen="{Binding ElementName=HamburgerButton,Path=IsChecked,Mode=TwoWay}">
+            <SplitView.Pane>
+                <Grid  RequestedTheme="Dark"
+                       Background="{ThemeResource SystemChromeMediumLowColor}">
+                    <StackPanel Orientation="Vertical">
+                        <RadioButton x:Name="AutoRadioButton"
+                                     x:Uid="AutoRadioButton"
+                                     Click="NavigationRadioButton_Click"
+                                     Checked="AutoRadioButton_Checked"
+                                     Style="{StaticResource NavigationRadioButtonStyle}"
+                                     Tag="&#xE81D;"
+                                     GroupName="Navigation"/>
+                        <RadioButton x:Name="ManualRadioButton"
+                                     x:Uid="ManualRadioButton"
+                                     Click="NavigationRadioButton_Click"
+                                     Checked="ManualRadioButton_Checked"
+                                     Style="{StaticResource NavigationRadioButtonStyle}"
+                                     Tag="&#xE8AF;"
+                                     GroupName="Navigation"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
+                        <Border Background="{ThemeResource SystemChromeHighColor}"
+                                Height="1"/>
+                        <RadioButton x:Name="SettingsRadioButton"
+                                     x:Uid="SettingsRadioButton"
+                                     Click="NavigationRadioButton_Click"
+                                     Checked="SettingsRadioButton_Checked"
+                                     Style="{StaticResource NavigationRadioButtonStyle}"
+                                     Tag="&#xE713;"
+                                     GroupName="Navigation"/>
+                    </StackPanel>
+                </Grid>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Frame x:Name="MainContentFrame" Margin="24,24,24,24"/>
+            </SplitView.Content>
+        </SplitView>
+    </Grid>
+</Page>
