@@ -39,18 +39,6 @@ namespace MOLL_Controller {
 
     private int selectedIndex;
 
-    /*public static readonly DependencyProperty dp = DependencyProperty.Register(
-      "Device",
-      typeof(DeviceInformation),
-      typeof(SettingDeviceDialog),
-      null
-      );
-
-    public DeviceInformation Device {
-      get { return (DeviceInformation)GetValue(dp); }
-      set { SetValue(dp, (DeviceInformation)value); }
-    }*/
-
     public SettingDeviceDialog () {
       this.InitializeComponent();
       MessageTextBlock.Text = loader.GetString("SearchingDevices");
@@ -83,16 +71,11 @@ namespace MOLL_Controller {
     }
 
     private void ContentDialog_PrimaryButtonClick (ContentDialog sender, ContentDialogButtonClickEventArgs args) {
-      selectedIndex =  DevicesListBox.SelectedIndex;
+      this.DataContext = deviceList[DevicesListBox.SelectedIndex];
     }
 
     private void DevicesListBox_SelectionChanged (object sender, SelectionChangedEventArgs e) {
       IsPrimaryButtonEnabled = true;
     }
-
-    public DeviceInformation GetDevice () {
-      return deviceList[selectedIndex];
-    }
-
   }
 }

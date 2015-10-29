@@ -16,7 +16,6 @@
         <StackPanel>
             <StackPanel.Resources>
                 <Storyboard x:Name="CollapseStoryboard">
-                    <FadeOutThemeAnimation Storyboard.TargetName="MessageTextBlock"/>
                     <FadeOutThemeAnimation Storyboard.TargetName="ProgressBar"/>
                 </Storyboard>
             </StackPanel.Resources>

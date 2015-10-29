@@ -14,13 +14,13 @@ namespace MOLL_Controller {
     private const string ContainerIdProperty = "System.Devices.ContainerId";
 
     public static async Task<string> GetDeviceName (this DeviceInformation device, CancellationToken cancellationToken) {
-      var gapService = await GetOtherServiceAsync(device, GattServiceUuids.GenericAccess, cancellationToken);
+      var gapService = await device.GetOtherServiceAsync(GattServiceUuids.GenericAccess, cancellationToken);
       var deviceName = gapService.GetCharacteristics(GattDeviceService.ConvertShortIdToUuid(0x2a00)).First();
       var deviceNameValue = await deviceName.ReadValueAsync(BluetoothCacheMode.Uncached).AsTask(cancellationToken);
       return deviceNameValue.Value.DecodeUtf8String();
     }
 
-    private static async Task<GattDeviceService> GetOtherServiceAsync (DeviceInformation serviceInformation, Guid serviceUuid, CancellationToken cancellationToken) {
+    public static async Task<GattDeviceService> GetOtherServiceAsync (this DeviceInformation serviceInformation, Guid serviceUuid, CancellationToken cancellationToken) {
       var containerId = serviceInformation.Properties[ContainerIdProperty].ToString();
       var selector = GattDeviceService.GetDeviceSelectorFromUuid(serviceUuid);
       var selectorWithContainer = String.Format("{0} AND System.Devices.ContainerId:=\"{{{1}}}\"", selector, containerId);
