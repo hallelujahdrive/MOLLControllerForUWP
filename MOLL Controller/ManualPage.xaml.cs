@@ -57,6 +57,14 @@ namespace MOLL_Controller {
     private const int RIGHT_P = 3;
     private const int RIGHT_N = 4;
 
+    //LED
+    private const int LED_RED = 1;
+    private const int LED_GREEN = 2;
+    private const int LED_BLUE = 3;
+
+    private const byte HIGH = 1;
+    private const byte LOW = 0;
+
     //操作キー
     private const VirtualKey FORWARD_KEY = VirtualKey.W;
     private const VirtualKey BACK_KEY = VirtualKey.S;
@@ -67,9 +75,14 @@ namespace MOLL_Controller {
     private const VirtualKey LEFT_BACK_KEY = VirtualKey.Z;
     private const VirtualKey RIGHT_BACK_KEY = VirtualKey.C;
 
+    //LED
+    private const VirtualKey LED_RED_KEY = VirtualKey.Number1;
+    private const VirtualKey LED_GREEN_KEY = VirtualKey.Number2;
+    private const VirtualKey LED_BLUE_KEY = VirtualKey.Number3;
+    private const VirtualKey LED_WHITE_KEY = VirtualKey.Number4;
+
     private VirtualKey currentKey;
 
-    private bool existSettings;
     private byte velocity;
     private bool velocityIndividual;
     private byte velocityL;
@@ -85,6 +98,8 @@ namespace MOLL_Controller {
     private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
     private GattCharacteristic txCharacteristic;
+
+    private List<VirtualKey> pressedKeyList = new List<VirtualKey>();
 
     public ManualPage () {
       this.InitializeComponent();
@@ -154,58 +169,64 @@ namespace MOLL_Controller {
 
 
     private void Grid_KeyUp (object sender, KeyRoutedEventArgs e) {
+
       if (txCharacteristic != null) {
-        //currentKeyの更新
-        currentKey = 0;
-        //停止
-        WriteCharacteristic(new byte[5] { MOVE, 0, 0, 0, 0 });
+        //リストの更新
+        switch (e.Key) {
+          case FORWARD_KEY:
+          case BACK_KEY:
+          case TURN_LEFT_KEY:
+          case TURN_RIGHT_KEY:
+          case LEFT_FORWARD_KEY:
+          case RIGHT_FORWARD_KEY:
+          case LEFT_BACK_KEY:
+          case RIGHT_BACK_KEY:
+            //一致をとる
+            for(int i = 0; i < pressedKeyList.Count(); i++) {
+              if (pressedKeyList[i].Equals(e.Key)) {
+                //リストから削除
+                pressedKeyList.RemoveAt(i);
+                //currentKeyの更新
+                currentKey = i > 0 ? pressedKeyList[i-1] : VirtualKey.None;
+                SendCommand(currentKey);
+                break;
+              }
+            }
+            break;
+          default:
+            return;
+        } 
       }
     }
 
     private void Grid_KeyDown (object sender, KeyRoutedEventArgs e) {
 
       if (txCharacteristic != null && currentKey != e.Key) {
-        //currentKeyの更新
-        currentKey = e.Key;
-
-        var value = new byte[5] { MOVE, 0, 0, 0, 0 };
 
         switch (e.Key) {
           case FORWARD_KEY:
-            value[LEFT_P] = velocityL;
-            value[RIGHT_P] = velocityR;
-            break;
           case BACK_KEY:
-            value[LEFT_N] = velocityL;
-            value[RIGHT_N] = velocityR;
-            break;
           case TURN_LEFT_KEY:
-            value[LEFT_N] = velocityL;
-            value[RIGHT_P] = velocityR;
-            break;
           case TURN_RIGHT_KEY:
-            value[LEFT_P] = velocityL;
-            value[RIGHT_N] = velocityR;
-            break;
           case LEFT_FORWARD_KEY:
-            value[RIGHT_P] = velocityR;
-            break;
           case RIGHT_FORWARD_KEY:
-            value[LEFT_P] = velocityL;
-            break;
           case LEFT_BACK_KEY:
-            value[RIGHT_N] = velocityR;
-            break;
           case RIGHT_BACK_KEY:
-            value[LEFT_N] = velocityL;
+            //currentKeyの更新
+            currentKey = e.Key;
+            //リストに追加
+            pressedKeyList.Add(e.Key);
             break;
           default:
+            //LEDの設定
+            SetLed(e.Key);
             return;
         }
 
         //送信
-        WriteCharacteristic(value);
+        SendCommand(e.Key);
       }
+      
     }
 
     private void SetUpMoll () {
@@ -219,6 +240,8 @@ namespace MOLL_Controller {
       value[2] = velocityR;
 
       int i = 6;
+
+      //リトルエンディアンな
 
       //赤外線線センサ
       foreach (byte data in BitConverter.GetBytes(sensorThreshold)) {
@@ -236,6 +259,74 @@ namespace MOLL_Controller {
       }
 
       //値の書き込み
+      WriteCharacteristic(value);
+    }
+
+    //MOVEの送信
+    private void SendCommand (VirtualKey key) {
+
+      var value = new byte[5] { MOVE, 0, 0, 0, 0 };
+
+      switch (key) {
+        case FORWARD_KEY:
+          value[LEFT_P] = velocityL;
+          value[RIGHT_P] = velocityR;
+          break;
+        case BACK_KEY:
+          value[LEFT_N] = velocityL;
+          value[RIGHT_N] = velocityR;
+          break;
+        case TURN_LEFT_KEY:
+          value[LEFT_N] = velocityL;
+          value[RIGHT_P] = velocityR;
+          break;
+        case TURN_RIGHT_KEY:
+          value[LEFT_P] = velocityL;
+          value[RIGHT_N] = velocityR;
+          break;
+        case LEFT_FORWARD_KEY:
+          value[RIGHT_P] = velocityR;
+          break;
+        case RIGHT_FORWARD_KEY:
+          value[LEFT_P] = velocityL;
+          break;
+        case LEFT_BACK_KEY:
+          value[RIGHT_N] = velocityR;
+          break;
+        case RIGHT_BACK_KEY:
+          value[LEFT_N] = velocityL;
+          break;
+      }
+
+      //送信
+      WriteCharacteristic(value);
+    }
+
+    //LEDの設定
+    private void SetLed (VirtualKey key) {
+
+      var value = new byte[] { SET_LED, LOW, LOW, LOW };
+
+      switch (key) {
+        case LED_RED_KEY:
+          value[LED_RED] = HIGH;
+          break;
+        case LED_GREEN_KEY:
+          value[LED_GREEN] = HIGH;
+          break;
+        case LED_BLUE_KEY:
+          value[LED_BLUE] = HIGH;
+          break;
+        case LED_WHITE_KEY:
+          value[LED_RED] = HIGH;
+          value[LED_GREEN] = HIGH;
+          value[LED_BLUE] = HIGH;
+          break;
+        default:
+          return;
+      }
+
+      //送信
       WriteCharacteristic(value);
     }
   }
