@@ -120,8 +120,20 @@
   <data name="AutoRadioButton.Content" xml:space="preserve">
     <value>自動探索</value>
   </data>
+  <data name="AutoSettings.Header" xml:space="preserve">
+    <value>自動探索の設定</value>
+  </data>
   <data name="AutoTitle" xml:space="preserve">
     <value>自動探索</value>
+  </data>
+  <data name="BackPeriod.Header" xml:space="preserve">
+    <value>回避の後退時間</value>
+  </data>
+  <data name="BackPeriod.Maximum" xml:space="preserve">
+    <value>2000</value>
+  </data>
+  <data name="CommonSettings.Header" xml:space="preserve">
+    <value>共通設定</value>
   </data>
   <data name="ConnectionStatus.Header" xml:space="preserve">
     <value>接続状態</value>
@@ -147,8 +159,17 @@
   <data name="NotFoundDevices" xml:space="preserve">
     <value>デバイスが見つかりませんでした。</value>
   </data>
+  <data name="Other.Header" xml:space="preserve">
+    <value>その他</value>
+  </data>
   <data name="SearchingDevices" xml:space="preserve">
     <value>デバイスを検索しています。</value>
+  </data>
+  <data name="SensorThreshold.Header" xml:space="preserve">
+    <value>赤外線センサの閾値</value>
+  </data>
+  <data name="SensorThreshold.Maximum" xml:space="preserve">
+    <value>1000</value>
   </data>
   <data name="SettingDevice.Content" xml:space="preserve">
     <value>デバイスの設定</value>
@@ -168,10 +189,37 @@
   <data name="SettingsTitle" xml:space="preserve">
     <value>設定</value>
   </data>
+  <data name="TurnPeriod.Header" xml:space="preserve">
+    <value>後退の転回時間</value>
+  </data>
+  <data name="TurnPeriod.Maximum" xml:space="preserve">
+    <value>2000</value>
+  </data>
   <data name="Unimplemented.Text" xml:space="preserve">
     <value>未実装</value>
   </data>
   <data name="Unsetting" xml:space="preserve">
     <value>未設定</value>
+  </data>
+  <data name="Velocity.Header" xml:space="preserve">
+    <value>速度(PWM)</value>
+  </data>
+  <data name="Velocity.Maximum" xml:space="preserve">
+    <value>255</value>
+  </data>
+  <data name="VelocityIndividual.Content" xml:space="preserve">
+    <value>速度を左右個別に設定する</value>
+  </data>
+  <data name="VelocityLeft.Header" xml:space="preserve">
+    <value>左側の速度(PWM)</value>
+  </data>
+  <data name="VelocityLeft.Maximum" xml:space="preserve">
+    <value>255</value>
+  </data>
+  <data name="VelocityRight.Header" xml:space="preserve">
+    <value>右側の速度(PWM)</value>
+  </data>
+  <data name="VelocityRight.Maximum" xml:space="preserve">
+    <value>255</value>
   </data>
 </root>

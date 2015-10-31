@@ -10,7 +10,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/HumburgerButtonStyle.xaml"/>
                 <ResourceDictionary Source="Styles/NavigationRadioButtonStyle.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/PivotStyle.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="#F44336"/>

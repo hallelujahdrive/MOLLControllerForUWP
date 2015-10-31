@@ -1,0 +1,71 @@
+﻿<Page
+    x:Class="MOLL_Controller.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MOLL_Controller"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+  <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Pivot x:Name="RootPivot"
+               Style="{StaticResource PivotStyle}">
+      <Pivot.HeaderTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding}" FontSize ="16"/>
+        </DataTemplate>
+      </Pivot.HeaderTemplate>
+      <PivotItem x:Uid="CommonSettings">
+        <ScrollViewer>
+          <StackPanel HorizontalAlignment="Left"
+                    Margin="24,24,24,24">
+            <Slider x:Name="VelocitySlider"
+                    x:Uid="Velocity"
+                    ValueChanged="VelocitySlider_ValueChanged"
+                    HorizontalAlignment="Left"
+                    Width="180"/>
+            <CheckBox x:Name="VelocityIndividualCheckBox"
+                      x:Uid="VelocityIndividual"
+                      Checked="VelocityIndividualCheckBox_CheckedChanged"
+                      Unchecked="VelocityIndividualCheckBox_CheckedChanged"
+                      Margin="0,16,0,0"/>
+            <Slider x:Name="VelocityLeftSlider"
+                    x:Uid="VelocityLeft"
+                    ValueChanged="VelocityLeftSlider_ValueChanged"
+                    IsEnabled="{Binding ElementName=VelocityIndividualCheckBox, Path=IsChecked, Mode=TwoWay}"
+                    Width="180"
+                    Margin="0,16,0,0"/>
+            <Slider x:Name="VelocityRightSlider"
+                    x:Uid="VelocityRight"
+                    ValueChanged="VelocityRightSlider_ValueChanged"
+                    IsEnabled="{Binding ElementName=VelocityIndividualCheckBox, Path=IsChecked, Mode=TwoWay}"
+                    Width="180"
+                    Margin="0,16,0,0"/>
+            <Slider x:Name="SensorThresholdtSlider"
+                    x:Uid="SensorThreshold"
+                    ValueChanged="SensorThresholdtSlider_ValueChanged"
+                    Width="180"
+                    Margin="0,16,0,0"/>
+            <Slider x:Name="BackPeripdSlider"
+                    x:Uid="BackPeriod"
+                    ValueChanged="BackPeripdSlider_ValueChanged"
+                    Width="180"
+                    Margin="0,16,0,0"/>
+            <Slider x:Name="TurnPeriodSlider"
+                    x:Uid="TurnPeriod"
+                    ValueChanged="TurnPeriodSlider_ValueChanged"
+                    Width="180"
+                    Margin="0,16,0,0"/>
+          </StackPanel>
+        </ScrollViewer>
+
+      </PivotItem>
+      <PivotItem x:Uid="AutoSettings">
+
+      </PivotItem>
+      <PivotItem x:Uid="Other">
+
+      </PivotItem>
+    </Pivot>
+  </Grid>
+</Page>

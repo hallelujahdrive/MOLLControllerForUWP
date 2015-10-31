@@ -10,6 +10,8 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Gaming.Input;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,7 +32,19 @@ namespace MOLL_Controller {
     private static Guid RBL_SERVICE = new Guid("713D0000-503E-4C75-BA94-3148F18D941E");
     private static Guid TX_CHARACTERISTIC = new Guid("713D0003-503E-4C75-BA94-3148F18D941E");
 
+    private const string EXIST_SETTINGS = "EXIST_SETTINGS";
+    private const string VELOCITY_SETTING = "VELOCITY";
+    private const string VELOCITY_INDIVIDUAL_SETTING = "VELOCITY_INDIVIDUAL";
+    private const string VELOCITY_LEFT_SETTING = "VELOCITY_LEFT";
+    private const string VELOCITY_RIGHT_SETTING = "VELOCITY_RIGHT";
+    private const string SENSOR_THRESHOLD_SETTING = "SENSOR_THRESHOLD";
+    private const string BACK_PERIOD_SETTING = "BACK_PERIOD";
+    private const string TURN_PERIOD_SETTING = "TURN_PERIOD";
+
     private static byte DEFAULT_VELOCITY = 120;
+    private static int DEFAULT_SEOSOR_THRESHOLD = 500;
+    private static int DEFAULT_BACK_PERIOD = 500;
+    private static int DEFAULT_TURN_PERIOD = 500;
 
     //命令タイプ
     private const byte SET_UP = 0;
@@ -55,16 +69,49 @@ namespace MOLL_Controller {
 
     private VirtualKey currentKey;
 
-    private byte velocityL = 255;
-    private byte velocityR = 255;
+    private bool existSettings;
+    private byte velocity;
+    private bool velocityIndividual;
+    private byte velocityL;
+    private byte velocityR;
+    private int sensorThreshold;
+    private int backPeriod;
+    private int turnPeriod;
 
     private ResourceLoader loader = new ResourceLoader();
+
+    private ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+
     private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
     private GattCharacteristic txCharacteristic;
 
     public ManualPage () {
       this.InitializeComponent();
+
+      bool existSettings = (bool)localSettings.Values[EXIST_SETTINGS];
+
+      if (existSettings) {
+
+        velocity = (byte)localSettings.Values[VELOCITY_SETTING];
+
+        if (!(velocityIndividual = (bool)localSettings.Values[VELOCITY_INDIVIDUAL_SETTING])) {
+          velocityL = velocity;
+          velocityR = velocity;
+        } else {
+          velocityL = (byte)localSettings.Values[VELOCITY_LEFT_SETTING];
+          velocityR = (byte)localSettings.Values[VELOCITY_RIGHT_SETTING];
+        }
+        sensorThreshold = (int)localSettings.Values[SENSOR_THRESHOLD_SETTING];
+        backPeriod = (int)localSettings.Values[BACK_PERIOD_SETTING];
+        turnPeriod = (int)localSettings.Values[TURN_PERIOD_SETTING];
+      } else {
+        velocityL = DEFAULT_VELOCITY;
+        velocityR = DEFAULT_VELOCITY;
+        sensorThreshold = DEFAULT_SEOSOR_THRESHOLD;
+        backPeriod = DEFAULT_BACK_PERIOD;
+        turnPeriod = DEFAULT_TURN_PERIOD;
+      }
     }
 
     protected override void OnNavigatedTo (NavigationEventArgs e) {
@@ -82,7 +129,9 @@ namespace MOLL_Controller {
         //Characteristicの取得
         var service = await device.GetOtherServiceAsync(RBL_SERVICE, cancellationTokenSource.Token);
         txCharacteristic = service.GetCharacteristics(TX_CHARACTERISTIC).First();
-        Debug.WriteLine(txCharacteristic.CharacteristicProperties.ToString());
+
+        //MollのSetup
+        SetUpMoll();
       }
     }
 
@@ -105,7 +154,7 @@ namespace MOLL_Controller {
 
 
     private void Grid_KeyUp (object sender, KeyRoutedEventArgs e) {
-      if(txCharacteristic != null) {
+      if (txCharacteristic != null) {
         //currentKeyの更新
         currentKey = 0;
         //停止
@@ -114,13 +163,12 @@ namespace MOLL_Controller {
     }
 
     private void Grid_KeyDown (object sender, KeyRoutedEventArgs e) {
-      Debug.WriteLine(e.Key);
 
       if (txCharacteristic != null && currentKey != e.Key) {
         //currentKeyの更新
         currentKey = e.Key;
 
-        var value = new byte[5] {MOVE, 0, 0, 0, 0};
+        var value = new byte[5] { MOVE, 0, 0, 0, 0 };
 
         switch (e.Key) {
           case FORWARD_KEY:
@@ -158,6 +206,37 @@ namespace MOLL_Controller {
         //送信
         WriteCharacteristic(value);
       }
+    }
+
+    private void SetUpMoll () {
+
+      var value = new byte[15];
+
+      //フラグ
+      value[0] = SET_UP;
+      //速度
+      value[1] = velocityL;
+      value[2] = velocityR;
+
+      int i = 6;
+
+      //赤外線線センサ
+      foreach (byte data in BitConverter.GetBytes(sensorThreshold)) {
+        value[i--] = data;
+      }
+      i = 10;
+      //後退時間
+      foreach (byte data in BitConverter.GetBytes(backPeriod)) {
+        value[i--] = data;
+      }
+      i = 14;
+      //転回時間
+      foreach (byte data in BitConverter.GetBytes(turnPeriod)) {
+        value[i--] = data;
+      }
+
+      //値の書き込み
+      WriteCharacteristic(value);
     }
   }
 }

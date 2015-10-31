@@ -7,40 +7,40 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-          KeyUp="Grid_KeyUp"
-          KeyDown="Grid_KeyDown">
+  <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        Margin="24,24,24,24"
+        KeyUp="Grid_KeyUp"
+        KeyDown="Grid_KeyDown">
 
-        <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical">
 
-            <TextBlock x:Uid="Moll"
-                       FontSize="24"
-                       VerticalAlignment="Top"
-                       Margin="0,0,0,24"/>
+      <TextBlock x:Uid="Moll"
+                 FontSize="24"
+                 VerticalAlignment="Top"
+                 Margin="0,0,0,24"/>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="120"/>
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+        <TextBlock x:Uid="DeviceName"
+                   FontSize="16"/>
+        <TextBlock Grid.Column="1"
+                   x:Name="DeviceNameTextBlock"
+                   FontSize="16"/>
+      </Grid>
 
-                <TextBlock x:Uid="DeviceName"
-                           FontSize="16"/>
-                <TextBlock Grid.Column="1"
-                           x:Name="DeviceNameTextBlock"
-                           FontSize="16"/>
-            </Grid>
+      <ToggleSwitch x:Name="ConnectionStatusToggleSwitch"
+                    x:Uid="ConnectionStatus"
+                    Margin="0,16,0,0"
+                    IsEnabled="False"/>
 
-            <ToggleSwitch x:Name="ConnectionStatusToggleSwitch"
-                          x:Uid="ConnectionStatus"
-                          Margin="0,16,0,0"
-                          IsEnabled="False"/>
-
-            <Button x:Name="SettingDeviceButton"
-                    x:Uid="SettingDevice"
-                    FontSize="16"
-                    Click="SettingDeviceButton_Click"
-                    Margin="0,16,0,0"/>
-        </StackPanel>
-    </Grid>
+      <Button x:Name="SettingDeviceButton"
+              x:Uid="SettingDevice"
+              FontSize="16"
+              Click="SettingDeviceButton_Click"
+              Margin="0,16,0,0"/>
+    </StackPanel>
+  </Grid>
 </Page>

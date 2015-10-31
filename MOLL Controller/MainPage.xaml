@@ -75,7 +75,7 @@
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame x:Name="MainContentFrame" Margin="24,24,24,24"/>
+                <Frame x:Name="MainContentFrame"/>
             </SplitView.Content>
         </SplitView>
     </Grid>
